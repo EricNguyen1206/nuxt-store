@@ -4,7 +4,7 @@ import { firestore } from "~/server/plugins/firebase.server";
 export default defineEventHandler(async (event) => {
     const { id }: any = event.context.params;
 
-    const docRef = doc(firestore, "production", id);
+    const docRef = doc(firestore, "product", id);
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
         setResponseStatus(event, 200);
