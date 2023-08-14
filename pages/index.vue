@@ -69,12 +69,23 @@
 
 <script setup lang="ts">
 import { PRODUCTS_CATEGORY } from "~/constants";
-import { useAssetsStore } from "~/store/assetsStore";
+import { useAssetsStore } from "~/store/assetStore";
+import { useCartStore } from "~/store/cartStore";
+import { useUserStore } from "~/store/userStore";
+
 const assetsStore = useAssetsStore();
+const userStore = useUserStore();
+const cartStore = useCartStore();
+onMounted(() => {
+  if (userStore.userData?.userId) {
+    cartStore.getUserCart(userStore.userData?.userId);
+  }
+  console.log("cart:", cartStore);
+});
 const [men, women, kid] = await Promise.all([
-  useFetch("/api/product?category=men"),
-  useFetch("/api/product?category=women"),
-  useFetch("/api/product?category=kid"),
+  useFetch("/api/product?categoryId=men"),
+  useFetch("/api/product?categoryId=women"),
+  useFetch("/api/product?categoryId=kid"),
 ]).then((values) => values.map((res) => res.data));
 onBeforeMount(() => {
   Promise.all([

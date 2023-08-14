@@ -146,7 +146,7 @@ import {
   ManOutlined,
   WomanOutlined,
 } from "@ant-design/icons-vue";
-import { useAssetsStore } from "~/store/assetsStore";
+import { useAssetsStore } from "~/store/assetStore";
 
 const assetsStore = useAssetsStore();
 

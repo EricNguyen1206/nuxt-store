@@ -115,7 +115,7 @@ import {
 
 import { INVENTORIES_TABLE_COLUMN } from "~/constants";
 // import { IProduct } from "~/types";
-import { useAssetsStore } from "~/store/assetsStore";
+import { useAssetsStore } from "~/store/assetStore";
 import { IInventoryDto } from "~/types/dto/inventory";
 import { useReceiptStore } from "~/store/receiptStore";
 
@@ -146,8 +146,6 @@ const {
   method: "get",
 });
 
-console.log("inventories", inventories);
-
 // event handler & methods
 const handleTableChange: TableProps["onChange"] = (pagination) => {
   pagination.current && (page.value = pagination.current);
@@ -162,7 +160,6 @@ const setOpenCreateProductDialog = (value: boolean) => {
 
 // open edit product dialog
 const handleOpenAddReceiptProductDialog = (product: IInventoryDto) => {
-  console.log("product adding", product);
   addingProduct.value = product;
   isOpenAddReceiptProductDialog.value = true;
 };
@@ -181,3 +178,4 @@ const setOpenAddReceiptProductDialog = (value: boolean) => {
   isOpenAddReceiptProductDialog.value = value;
 };
 </script>
+~/store/assetStore

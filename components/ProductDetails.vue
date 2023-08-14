@@ -1,8 +1,17 @@
+<!-- eslint-disable vue/singleline-html-element-content-newline -->
+<!-- eslint-disable vue/max-attributes-per-line -->
+<!-- eslint-disable vue/html-self-closing -->
 <!-- Component overview
     Display product detail: image, title, description
     and add to card button
 -->
 <template>
+  <ModalAddToCart
+    :visible="showModalAddToCard"
+    :inventories="inventories ?? []"
+    @set-visible="setOpenDialog"
+  />
+
   <div class="card">
     <div class="grid grid-cols-2 gap-10">
       <div class="p-7">
@@ -31,20 +40,39 @@
 <script setup lang="ts">
 import { message } from "ant-design-vue";
 import { PlusCircleOutlined } from "@ant-design/icons-vue";
+import ModalAddToCart from "./ModalAddToCart.vue";
+import { useUserStore } from "~/store/userStore";
+import { IInventoryDto } from "~/types/dto/inventory";
+import { IApiListResponse } from "~/types/common/response";
+
+// eslint-disable-next-line vue/require-prop-types
 const { product } = defineProps(["product"]);
-const { addToCard } = useCart();
-const { user } = useAuth();
+const userStore = useUserStore();
+const { data: inventories } = await useFetch(
+  "/api/inventory/" + product.productId
+).then((res) => res.data.value as IApiListResponse<IInventoryDto>);
 const router = useRouter();
+const showModalAddToCard = ref<boolean>(false);
+
+onMounted(async () => {
+  // const res = await useFetch("/api/inventory/" + product.productId);
+  // console.log("inventory data: ", res.data.value);
+  // inventories.value = res.data.value as IInventoryDto[];
+  console.log("inventory data: ", inventories);
+});
 
 // Handle add to cart context
 const handleClick = () => {
-  if (!user.value) {
+  if (!userStore.userData) {
     message.warning("Plese login to get product!");
     router.push("/auth/login");
   } else {
-    addToCard(product);
-    message.success("Product added!");
+    showModalAddToCard.value = true;
   }
+};
+
+const setOpenDialog = (value: boolean) => {
+  showModalAddToCard.value = value;
 };
 </script>
 
