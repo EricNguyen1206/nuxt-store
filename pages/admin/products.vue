@@ -91,7 +91,7 @@ import {
 
 import { PRODUCTS_TABLE_COLUMN } from "~/constants";
 import { IProduct } from "~/types";
-import { useAssetsStore } from "~/store/assetsStore";
+import { useAssetsStore } from "~/store/assetStore";
 
 // meta
 definePageMeta({
@@ -128,8 +128,6 @@ const {
 } = await useFetch(() => `/api/product?page=${page.value}`, {
   method: "get",
 });
-
-console.log("products", products);
 
 // event handler & methods
 const handleTableChange: TableProps["onChange"] = (pagination) => {
@@ -194,3 +192,4 @@ const handleExportData = async () => {
   }
 };
 </script>
+~/store/assetStore

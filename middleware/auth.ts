@@ -1,6 +1,8 @@
+import { useUserStore } from "~/store/userStore";
+
 export default defineNuxtRouteMiddleware((to, from) => {
-    const { user } = useAuth();
-    if ((to.path == "/profile" || to.path == "/checkout") && !user.value) {
-        return navigateTo("/auth/login");
-    }
+  const { userData } = useUserStore();
+  if ((to.path == "/profile" || to.path == "/checkout") && !userData) {
+    return navigateTo("/auth/login");
+  }
 });

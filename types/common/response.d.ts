@@ -4,7 +4,7 @@ export interface IBasicApiResponse {
 }
 
 export interface IApiResponse<T> extends IBasicApiResponse {
-  data: T;
+  data?: T;
 }
 
 export interface IApiListResponse<T> extends IApiResponse<T[]> {

@@ -1,21 +1,37 @@
-import { collection, doc, getDoc } from "firebase/firestore";
+import sha256 from "crypto-js/sha256";
+import { doc, getDoc } from "firebase/firestore";
 import { firestore } from "~/server/plugins/firebase.server";
-import { IResponse, IUser } from "~/types";
+import { IApiResponse } from "~/types/common/response";
+import { IUserDto } from "~/types/dto/user";
+import { IRoleEntity } from "~/types/entities/role.entity";
+import { IUserEntity } from "~/types/entities/user.entity";
 
-export default defineEventHandler(async (event): Promise<IResponse<IUser>> => {
+export default defineEventHandler(
+  async (event): Promise<IApiResponse<IUserDto>> => {
     const { email, password } = await readBody(event);
-    const docRef = doc(firestore, "account", email);
-    const docSnap = await getDoc(docRef);
-    console.log('docSnap.data()', docSnap.data())
-    if (docSnap.exists() && docSnap.data().password === password) {
-        const userSnap = await getDoc(docSnap.data().userId)
-        // const roleSnap = await getDoc(doc(firestore, "role", docSnap.data().roleId))
-        // const userSnap = collection(firestore, docSnap.)
-        return {
-            message: "Login success!",
-            payload: { ...(userSnap.data() as Object), email } as IUser,
-            status: 200,
-        };
+    const accountRef = doc(firestore, "account", email);
+    const accountSnap = await getDoc(accountRef);
+    if (
+      accountSnap.exists() &&
+      accountSnap.data().password === sha256(password).toString()
+    ) {
+      const userSnap = await getDoc(
+        doc(firestore, "user", accountSnap.data().userId)
+      );
+      const roleSnap = await getDoc(
+        doc(firestore, "role", accountSnap.data().roleId)
+      );
+      return {
+        message: "Login success!",
+        data: {
+          ...(userSnap.data() as IUserEntity),
+          role: { ...(roleSnap.data() as IRoleEntity) }.role,
+          userId: userSnap.id,
+          email,
+        } as IUserDto,
+        status: 200,
+      };
     }
-    return { message: "Login fail!", status: 401, payload: null };
-});
+    return { message: "Login fail!", status: 401 };
+  }
+);

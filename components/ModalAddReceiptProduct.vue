@@ -71,7 +71,6 @@ const handleCancel = () => {
  */
 const handleOk = async () => {
   try {
-    console.log("props.modelValue", props.modelValue);
     if (props.modelValue) {
       receiptStore.addProduct({
         ...props.modelValue,

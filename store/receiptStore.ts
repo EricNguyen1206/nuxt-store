@@ -2,12 +2,12 @@
 import { defineStore } from "pinia";
 import { IInventoryDto } from "~/types/dto/inventory";
 
-interface AssetsState {
+type TReceiptState = {
   details: IInventoryDto[];
-}
+};
 
 export const useReceiptStore = defineStore("receipt", {
-  state: (): AssetsState => ({
+  state: (): TReceiptState => ({
     details: [],
   }),
   actions: {

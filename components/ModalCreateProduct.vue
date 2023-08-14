@@ -132,7 +132,7 @@ import { UploadChangeParam, UploadProps, message } from "ant-design-vue";
 import { UploadOutlined } from "@ant-design/icons-vue";
 import { IColor } from "~/types/color";
 import { uploadImage } from "~/utils/uploadImage";
-import { useAssetsStore } from "~/store/assetsStore";
+import { useAssetsStore } from "~/store/assetStore";
 import { ICategory } from "~/types/category";
 
 interface FormState {
@@ -229,3 +229,4 @@ const handleOk = async () => {
   }
 };
 </script>
+~/store/assetStore

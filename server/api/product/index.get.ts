@@ -16,11 +16,16 @@ export default defineEventHandler(async (event) => {
   page = Number(page) || 1;
   const start = (page - 1) * lim;
   if (categoryId) {
-    q = query(
-      collection(firestore, "product"),
-      where("categoryId", "==", categoryId),
-      where("tagId", "==", tagId)
-    );
+    q = tagId
+      ? query(
+          collection(firestore, "product"),
+          where("categoryId", "==", categoryId),
+          where("tagId", "==", tagId)
+        )
+      : query(
+          collection(firestore, "product"),
+          where("categoryId", "==", categoryId)
+        );
   } else {
     q = query(collection(firestore, "product"), orderBy("updated"));
   }

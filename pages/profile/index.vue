@@ -6,14 +6,17 @@ import {
   LogoutOutlined,
 } from "@ant-design/icons-vue";
 import { message } from "ant-design-vue";
+import { useCartStore } from "~/store/cartStore";
 import { IProduct, IUser } from "~/types";
+import { IProductDto } from "~/types/dto/product";
 // Page meta
 definePageMeta({
   middleware: "auth",
 });
 // State
 const { user, logout } = useAuth();
-const { cart, removeCartItem, getTotal, clearCart } = useCart();
+// const { cart, removeCartItem, getTotal, clearCart } = useCart();
+const cartStore = useCartStore();
 const isOpenEditDialog = ref<boolean>(false);
 const edittingUser = ref<IUser | undefined>(undefined);
 const visible = ref<boolean>(false);
@@ -42,9 +45,8 @@ const onClose = () => {
   visible.value = false;
 };
 
-const handleCheckout = () => {
-  clearCart();
-  message.success("Thank's for your purchase!");
+const handleCheckout = async () => {
+  await cartStore.orderProductInCart();
   onClose();
 };
 </script>
@@ -54,9 +56,9 @@ const handleCheckout = () => {
     <!-- Modal edit user infomation -->
     <ModalEditUser
       v-if="isOpenEditDialog"
+      v-model="edittingUser"
       :visible="isOpenEditDialog"
-      v-on:update:visible="isOpenEditDialog = $event"
-      v-bind:model-value="edittingUser"
+      @update:visible="isOpenEditDialog = $event"
     />
 
     <!-- Checkout drawer -->
@@ -72,15 +74,16 @@ const handleCheckout = () => {
           style="margin-right: 8px"
           type="primary"
           @click="handleCheckout"
-          >Checkout</a-button
         >
-        <a-button @click="onClose">Cancel</a-button>
+          Confirm
+        </a-button>
+        <a-button @click="onClose"> Cancel </a-button>
       </template>
       <a-list
+        :key="(record:IProductDto) => record.productId + record.colorId + record.sizeId"
         item-layout="horizontal"
-        :key="(record:IProduct) => record.id"
         :pagination="pagination"
-        :data-source="cart"
+        :data-source="cartStore.details"
       >
         <template #renderItem="{ item }">
           <a-list-item>
@@ -95,7 +98,7 @@ const handleCheckout = () => {
           </a-list-item>
         </template>
         <template #footer>
-          <p>Total: {{ getTotal() }} VND</p>
+          <p>Total: {{ cartStore.totalPrice }} VND</p>
         </template>
       </a-list>
     </a-drawer>
@@ -103,7 +106,7 @@ const handleCheckout = () => {
     <!-- Main layout profile -->
     <main class="profile-page">
       <!-- Banner -->
-      <section class="relative block" style="height: 500px">
+      <section class="relative block" :style="{ height: '500px' }">
         <div
           class="absolute top-0 w-full h-full bg-center bg-cover"
           style="
@@ -157,7 +160,7 @@ const handleCheckout = () => {
                   <div class="flex items-center py-6 mt-32 sm:mt-0">
                     <a-button type="primary" @click="handleEdit">
                       <template #icon>
-                        <EditOutlined />
+                        <edit-outlined />
                       </template>
                       Edit
                     </a-button>
@@ -178,21 +181,21 @@ const handleCheckout = () => {
                 <a-list
                   item-layout="vertical"
                   size="large"
-                  :key="(record:IProduct) => record.id"
+                  :key="(record:IProductDto) => record.productId + record.colorId + record.sizeId"
                   :pagination="pagination"
-                  :data-source="cart"
+                  :data-source="cartStore.details"
                 >
                   <template #footer>
                     <div class="px-4">
                       <a-button
-                        v-if="cart.length"
+                        v-if="cartStore.totalItems"
                         type="primary"
                         @click="showDrawer"
                       >
                         <template #icon>
                           <WalletOutlined />
                         </template>
-                        Checkout
+                        Order
                       </a-button>
                     </div>
                   </template>
